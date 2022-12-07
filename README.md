@@ -1,6 +1,6 @@
-## DogeCash Woocommerce Plugin
+## StakeCubeCoin Woocommerce Plugin
 
-Accepting DogeCash on your store has several benefits: instant arrival, no chargebacks, and 0 fees. Follow the steps below to install the plugin in your WooCommerce store and start accepting payments in DogeCash.
+Accepting StakeCubeCoin on your store has several benefits: instant arrival, no chargebacks, and 0 fees. Follow the steps below to install the plugin in your WooCommerce store and start accepting payments in DogeCash.
 
 ## Install the plugin
 
