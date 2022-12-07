@@ -131,17 +131,19 @@ if (class_exists('WC_Payment_Gateway')) {
 
         // Exchange rate in the default store currency
         public function scc_exchange_rate($default_currency) {
-    		$response = wp_remote_get(SCC_API_URL."?rate=".strtolower(esc_html($default_currency)));
-            $price = json_decode($response["body"]);
-            $response = $price[0]->current_price;
+    		if ( is_checkout() ) {
+    		    $response = wp_remote_get(ZNZ_API_URL."?rate=".strtolower(esc_html($default_currency)));
+                $price = json_decode($response["body"]);
+                $response = $price[0]->current_price;
 
-            if ( is_wp_error($response) )
-                return false;
+                if ( is_wp_error($response) )
+                    return false;
 
-            if ($response > 0)
-                return trim($response);
+                if ($response > 0)
+                    return trim($response);
 
-            return 0;
+                return 0;
+            }
         }
 
 
