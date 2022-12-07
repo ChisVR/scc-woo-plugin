@@ -38,7 +38,7 @@ if($cp_order->order_status == "confirmed") {
 
 
 ?>
-<?php if ( $order->get_payment_method() ==  $wc_dogec->id) : ?>
+<?php if ( $order->get_payment_method() ==  $wc_scc->id) : ?>
 
 		<input type="hidden" name="cp_order_remaining_time" value="<?php echo esc_html(scc_order_remaining_time($order->get_id())); ?>">
 		<input type="hidden" name="cp_order_id" value="<?php echo esc_html($order->get_id()); ?>">
@@ -65,7 +65,7 @@ if($cp_order->order_status == "confirmed") {
 		<?php if ( $order->needs_payment() ) : ?>
 		<div class="cp-box-wrapper">
 				<div class="cp-box-col-1">
-						<h2><?php echo esc_html($wc_dogec->method_title) ?></h2>
+						<h2><?php echo esc_html($wc_scc->method_title) ?></h2>
 						<p class="cp-payment-msg"><?php echo esc_html((scc_order_remaining_time($order->get_id()) < 0) ? "The payment time for order has expired! Do not make any payments as they will be invalid! If you have already made a payment within the allowed time, please wait." : $wc_scc->description) ?></p>
 
 						<div>Amount:</div>
