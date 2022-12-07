@@ -74,7 +74,7 @@ function scc_load_cp_scripts()
 {
     if (is_wc_endpoint_url('order-pay')) {
         wp_enqueue_style('cp-styles', plugins_url('css/cp-styles.css', __FILE__));
-        wp_enqueue_script('cp-script-scc', plugins_url('js/cp-script-scc.js', __FILE__));
+        wp_enqueue_script('cp-script', plugins_url('js/cp-script-scc.js', __FILE__));
     }
 }
 
