@@ -61,7 +61,7 @@ jQuery.noConflict();
                 url: '/wp-admin/admin-ajax.php',
                 type: "POST",
                 data: {
-                    action: "dogec_verify_payment",
+                    action: "scc_verify_payment",
                     order_id: $('input[name="cp_order_id"]').val()
                 },
                 dataType: "json",
