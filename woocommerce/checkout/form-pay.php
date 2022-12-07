@@ -18,10 +18,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$wc_dogec = new WC_Dogecash;
+$wc_scc = new WC_StakeCubeCoin;
 
 $totals = $order->get_order_item_totals();
-$cp_order = dogec_get_cp_order_info($order->get_id());
+$cp_order = scc_get_cp_order_info($order->get_id());
 
 if($cp_order->order_status == "expired") {
 		$redirect = $order->get_cancel_order_url();
@@ -40,7 +40,7 @@ if($cp_order->order_status == "confirmed") {
 ?>
 <?php if ( $order->get_payment_method() ==  $wc_dogec->id) : ?>
 
-		<input type="hidden" name="cp_order_remaining_time" value="<?php echo esc_html(dogec_order_remaining_time($order->get_id())); ?>">
+		<input type="hidden" name="cp_order_remaining_time" value="<?php echo esc_html(scc_order_remaining_time($order->get_id())); ?>">
 		<input type="hidden" name="cp_order_id" value="<?php echo esc_html($order->get_id()); ?>">
 
 		<div class="cp-order-info">
@@ -57,7 +57,7 @@ if($cp_order->order_status == "confirmed") {
 
 						<li class="cp-order-info-list-item">
 								<?php _e( 'Total:', 'woocommerce' ); ?>
-								<strong><?php echo esc_html($cp_order->order_in_crypto . " " . $wc_dogec->cryptocurrency_used . " (" . $cp_order->order_total . " " . $cp_order->order_default_currency . ")") ?></strong>
+								<strong><?php echo esc_html($cp_order->order_in_crypto . " " . $wc_scc->cryptocurrency_used . " (" . $cp_order->order_total . " " . $cp_order->order_default_currency . ")") ?></strong>
 						</li>
 				</ul>
 		</div>
@@ -66,7 +66,7 @@ if($cp_order->order_status == "confirmed") {
 		<div class="cp-box-wrapper">
 				<div class="cp-box-col-1">
 						<h2><?php echo esc_html($wc_dogec->method_title) ?></h2>
-						<p class="cp-payment-msg"><?php echo esc_html((dogec_order_remaining_time($order->get_id()) < 0) ? "The payment time for order has expired! Do not make any payments as they will be invalid! If you have already made a payment within the allowed time, please wait." : $wc_dogec->description) ?></p>
+						<p class="cp-payment-msg"><?php echo esc_html((scc_order_remaining_time($order->get_id()) < 0) ? "The payment time for order has expired! Do not make any payments as they will be invalid! If you have already made a payment within the allowed time, please wait." : $wc_scc->description) ?></p>
 
 						<div>Amount:</div>
 						<div class="cp-input-box">
@@ -88,7 +88,7 @@ if($cp_order->order_status == "confirmed") {
 								<div class="cp-counter">00:00</div>
 								<div class="cp-payment-info">
 										<div class="cp-payment-info-status">Waiting for payment...</div>
-										<div class="cp-payment-info-text">Exchange rate locked 1 <?php echo esc_html($wc_dogec->cryptocurrency_used) ?> = <?php echo esc_html(round($cp_order->order_crypto_exchange_rate, 5) . ' ' . $cp_order->order_default_currency) ?></div>
+										<div class="cp-payment-info-text">Exchange rate locked 1 <?php echo esc_html($wc_scc->cryptocurrency_used) ?> = <?php echo esc_html(round($cp_order->order_crypto_exchange_rate, 5) . ' ' . $cp_order->order_default_currency) ?></div>
 								</div>
 						</div>
 				</div>
