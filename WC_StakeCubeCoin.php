@@ -116,7 +116,7 @@ if (class_exists('WC_Payment_Gateway')) {
                     <table>
                         <tr style="vertical-align: middle; text-align: left;">
                             <td width="180">
-                                <img alt="plugin logo" width="160" style="max-height: 40px;" src="<?php echo plugins_url('img/plugin-logo.png', __FILE__) ?>">
+                                <img alt="plugin logo" width="160" style="max-height: 40px;" src="<?php echo plugins_url('img/plugin-logo-scc.png', __FILE__) ?>">
                             </td>
                             <td>
                                 <div>Exchange rate:</div>
@@ -132,7 +132,7 @@ if (class_exists('WC_Payment_Gateway')) {
         // Exchange rate in the default store currency
         public function scc_exchange_rate($default_currency) {
     		if ( is_checkout() ) {
-    		    $response = wp_remote_get(ZNZ_API_URL."?rate=".strtolower(esc_html($default_currency)));
+    		    $response = wp_remote_get(SCC_API_URL."?rate=".strtolower(esc_html($default_currency)));
                 $price = json_decode($response["body"]);
                 $response = $price[0]->current_price;
 
