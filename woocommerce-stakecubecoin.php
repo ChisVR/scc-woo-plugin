@@ -59,7 +59,7 @@ if (in_array('woocommerce/woocommerce.php', $active_plugins) || class_exists('Wo
         require 'WC_StakeCubeCoin.php';
     }
 } else {
-    function dogec_admin_notice()
+    function scc_admin_notice()
     {
         echo "<div style='margin-left: 2px;' class='error'><p><strong>Please install WooCommerce before using StakeCubeCoin Cryptocurrency Payment Gateway.</strong></p></div>";
         deactivate_plugins('/woocommerce-stakecubecoin/woocommerce-stakecubecoin.php');
@@ -237,8 +237,8 @@ function scc_verify_payment()
     }
 }
 
-add_action("wp_ajax_dogec_verify_payment", "scc_verify_payment");
-add_action("wp_ajax_nopriv_dogec_verify_payment", "scc_verify_payment");
+add_action("wp_ajax_scc_verify_payment", "scc_verify_payment");
+add_action("wp_ajax_nopriv_scc_verify_payment", "scc_verify_payment");
 
 
 
