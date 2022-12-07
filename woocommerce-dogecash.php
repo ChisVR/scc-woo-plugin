@@ -1,21 +1,21 @@
 <?php
 /*
-    Plugin Name: DogeCash Payment Gateway for Woocommerce
-    Description: Payment Gateway for DogeCash Cryptocurrency
-    Version: 1.0.7
-    Author: DogeCash
-    Author URI: https://dogecash.org
-    Plugin URI: https://github.com/dogecash/dogec-woo-plugin
-    Developer: DogeCash
+    Plugin Name: StakeCubeCoin Payment Gateway for Woocommerce
+    Description: Payment Gateway for StakeCubeCoin Cryptocurrency
+    Version: 1.0.0
+    Author: ChisVR
+    Author URI: https://chisdealhd.co.uk
+    Plugin URI: https://github.com/ChisVR/scc-woo-plugin
+    Developer: ChisVR
 */
 
-const DOGEC_API_URL = "https://payment-checker.chisdealhd.co.uk/DOGEC.php";
-const DOGEC_ORDERS_TABLE_NAME = "dogecash_cryptocurrency_orders";
+const SCC_API_URL = "https://payment-checker.chisdealhd.co.uk/SCC.php";
+const SCC_ORDERS_TABLE_NAME = "stakecubecoin_cryptocurrency_orders";
 
-function dogec_create_transactions_table()
+function scc_create_transactions_table()
 {
     global $wpdb;
-    $db_table_name = $wpdb->prefix . DOGEC_ORDERS_TABLE_NAME;
+    $db_table_name = $wpdb->prefix . SCC_ORDERS_TABLE_NAME;
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE IF NOT EXISTS $db_table_name (
@@ -43,34 +43,34 @@ $active_plugins = apply_filters('active_plugins', get_option('active_plugins'));
 
 if (in_array('woocommerce/woocommerce.php', $active_plugins) || class_exists('WooCommerce')) {
 
-    register_activation_hook(__FILE__, 'dogec_create_transactions_table');
-    add_filter('woocommerce_payment_gateways', 'dogec_add_dogecash_crypto_gateway');
+    register_activation_hook(__FILE__, 'scc_create_transactions_table');
+    add_filter('woocommerce_payment_gateways', 'scc_add_stakecubecoin_crypto_gateway');
 
-    function dogec_add_dogecash_crypto_gateway($gateways)
+    function scc_add_stakecubecoin_crypto_gateway($gateways)
     {
-        $gateways[] = 'WC_Dogecash';
+        $gateways[] = 'WC_StakeCubeCoin';
         return $gateways;
     }
 
-    add_action('plugins_loaded', 'dogec_init_payment_gateway');
+    add_action('plugins_loaded', 'scc_init_payment_gateway');
 
-    function dogec_init_payment_gateway()
+    function scc_init_payment_gateway()
     {
-        require 'WC_Dogecash.php';
+        require 'WC_StakeCubeCoin.php';
     }
 } else {
     function dogec_admin_notice()
     {
-        echo "<div style='margin-left: 2px;' class='error'><p><strong>Please install WooCommerce before using DogeCash Cryptocurrency Payment Gateway.</strong></p></div>";
-        deactivate_plugins('/woocommerce-dogecash/woocommerce-dogecash.php');
+        echo "<div style='margin-left: 2px;' class='error'><p><strong>Please install WooCommerce before using StakeCubeCoin Cryptocurrency Payment Gateway.</strong></p></div>";
+        deactivate_plugins('/woocommerce-stakecubecoin/woocommerce-stakecubecoin.php');
         wp_die();
     };
-    add_action('admin_notices', 'dogec_admin_notice');
+    add_action('admin_notices', 'scc_admin_notice');
 }
 
 
 // Add plugin scripts
-function dogec_load_cp_scripts()
+function scc_load_cp_scripts()
 {
     if (is_wc_endpoint_url('order-pay')) {
         wp_enqueue_style('cp-styles', plugins_url('css/cp-styles.css', __FILE__));
@@ -78,20 +78,20 @@ function dogec_load_cp_scripts()
     }
 }
 
-add_action('wp_enqueue_scripts', 'dogec_load_cp_scripts', 30);
+add_action('wp_enqueue_scripts', 'scc_load_cp_scripts', 30);
 
 
 // Processing of order
-function dogec_process_order($order_id)
+function scc_process_order($order_id)
 {
     global $wp;
-    $wc_dogec = new WC_Dogecash;
+    $wc_scc = new WC_StakeCubeCoin;
 
     $order_id = $wp->query_vars['order-pay'];
     $order = wc_get_order($order_id);
     $order_status = $order->get_status();
 
-    $order_crypto_exchange_rate = $wc_dogec->exchange_rate;
+    $order_crypto_exchange_rate = $wc_scc->exchange_rate;
 
     // Redirect to "cancelled" page when the order's payment is not received
     if ($order_status == 'cancelled') {
@@ -117,7 +117,7 @@ function dogec_process_order($order_id)
     if ($order_id > 0 && $order instanceof WC_Order) {
 
         global $wpdb;
-        $db_table_name = $wpdb->prefix . DOGEC_ORDERS_TABLE_NAME;
+        $db_table_name = $wpdb->prefix . SCC_ORDERS_TABLE_NAME;
         $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $db_table_name WHERE order_id = %d", $order_id));
 
         if ($wpdb->last_error) {
@@ -130,9 +130,9 @@ function dogec_process_order($order_id)
         // Record the order details for the first time
         if ($count == 0) {
 
-            $payment_address = $wc_dogec->payment_address;
+            $payment_address = $wc_scc->payment_address;
             $order_total = $order->get_total();
-            $order_in_crypto = dogec_order_total_in_crypto($order_total, $order_crypto_exchange_rate);
+            $order_in_crypto = scc_order_total_in_crypto($order_total, $order_crypto_exchange_rate);
             $order_currency = $order->get_currency();
 
             $record_new = $wpdb->insert($db_table_name, array('transaction_id' => "", 'payment_address' => $payment_address, 'order_id' => $order_id, 'order_total' => $order_total, 'order_in_crypto' => $order_in_crypto, 'order_default_currency' => $order_currency, 'order_crypto_exchange_rate' => $order_crypto_exchange_rate, 'order_status' => 'pending', 'order_time' => time()));
@@ -146,35 +146,35 @@ function dogec_process_order($order_id)
     }
 }
 
-add_action("before_woocommerce_pay", "dogec_process_order", 20);
+add_action("before_woocommerce_pay", "scc_process_order", 20);
 
 
 
 // Verification of payment
-function dogec_verify_payment()
+function scc_verify_payment()
 {
     global $wpdb;
-    $db_table_name = $wpdb->prefix . DOGEC_ORDERS_TABLE_NAME;
+    $db_table_name = $wpdb->prefix . SCC_ORDERS_TABLE_NAME;
 
-    $wc_dogec = new WC_Dogecash;
+    $wc_scc = new WC_StakeCubeCoin;
 
     $order_id = intval(sanitize_text_field($_POST['order_id']));
     $order = new WC_Order($order_id);
 
 
-    $cp_order = dogec_get_cp_order_info($order_id);
+    $cp_order = scc_get_cp_order_info($order_id);
     $payment_address = $cp_order->payment_address;
     $transaction_id = $cp_order->transaction_id;
     $order_in_crypto = $cp_order->order_in_crypto;
-    $confirmation_no = $wc_dogec->confirmation_no;
+    $confirmation_no = $wc_scc->confirmation_no;
     $order_time = $cp_order->order_time;
-    $max_time_limit = $wc_dogec->max_time_limit;
-    $plugin_version = $wc_dogec->plugin_version;
+    $max_time_limit = $wc_scc->max_time_limit;
+    $plugin_version = $wc_scc->plugin_version;
 
     if (empty($transaction_id)) {
         $transaction_id = "missing";
     }
-    $response = wp_remote_get(DOGEC_API_URL . "?address=" . $payment_address . "&tx=" . $transaction_id . "&amount=" . $order_in_crypto . "&conf=" . $confirmation_no . "&otime=" . $order_time . "&mtime=" . $max_time_limit . "&pv=" . $plugin_version);
+    $response = wp_remote_get(SCC_API_URL . "?address=" . $payment_address . "&tx=" . $transaction_id . "&amount=" . $order_in_crypto . "&conf=" . $confirmation_no . "&otime=" . $order_time . "&mtime=" . $max_time_limit . "&pv=" . $plugin_version);
     $response = wp_remote_retrieve_body($response);
     $response = json_decode($response);
 
@@ -237,16 +237,16 @@ function dogec_verify_payment()
     }
 }
 
-add_action("wp_ajax_dogec_verify_payment", "dogec_verify_payment");
-add_action("wp_ajax_nopriv_dogec_verify_payment", "dogec_verify_payment");
+add_action("wp_ajax_dogec_verify_payment", "scc_verify_payment");
+add_action("wp_ajax_nopriv_dogec_verify_payment", "scc_verify_payment");
 
 
 
 // Get information about the recorded order
-function dogec_get_cp_order_info($order_id)
+function scc_get_cp_order_info($order_id)
 {
     global $wpdb;
-    $db_table_name = $wpdb->prefix . DOGEC_ORDERS_TABLE_NAME;
+    $db_table_name = $wpdb->prefix . SCC_ORDERS_TABLE_NAME;
 
     $result = $wpdb->get_results($wpdb->prepare("SELECT * FROM $db_table_name WHERE order_id = %d", $order_id));
 
@@ -261,13 +261,13 @@ function dogec_get_cp_order_info($order_id)
 
 
 // Get information about the remaining time for order
-function dogec_order_remaining_time($order_id)
+function scc_order_remaining_time($order_id)
 {
     global $wpdb;
-    $db_table_name = $wpdb->prefix . DOGEC_ORDERS_TABLE_NAME;
+    $db_table_name = $wpdb->prefix . SCC_ORDERS_TABLE_NAME;
 
-    $wc_dogec = new WC_Dogecash;
-    $max_time_limit = $wc_dogec->max_time_limit * 60; // In seconds
+    $wc_scc = new WC_StakeCubeCoin;
+    $max_time_limit = $wc_scc->max_time_limit * 60; // In seconds
 
     $now = new DateTime();
     $order_time = $wpdb->get_var($wpdb->prepare("SELECT order_time FROM $db_table_name WHERE order_id = %d", $order_id));
@@ -286,7 +286,7 @@ function dogec_order_remaining_time($order_id)
 
 
 // Create order total
-function dogec_order_total_in_crypto($amount, $rate)
+function scc_order_total_in_crypto($amount, $rate)
 {
     $difference = 0.00002;
 
@@ -300,11 +300,11 @@ function dogec_order_total_in_crypto($amount, $rate)
     }
 
     // Create unique amount for payment
-    $wc_dogec = new WC_Dogecash;
-    $max_time_limit = $wc_dogec->max_time_limit * 60;
+    $wc_scc = new WC_StakeCubeCoin;
+    $max_time_limit = $wc_scc->max_time_limit * 60;
 
     global $wpdb;
-    $db_table_name = $wpdb->prefix . DOGEC_ORDERS_TABLE_NAME;
+    $db_table_name = $wpdb->prefix . SCC_ORDERS_TABLE_NAME;
     $safe_period = $max_time_limit * 3;
 
     $other_amounts = $wpdb->get_results("SELECT order_in_crypto FROM $db_table_name WHERE order_status <> 'confirmed' AND order_time > (UNIX_TIMESTAMP(NOW()) - $safe_period)");
@@ -331,7 +331,7 @@ function dogec_order_total_in_crypto($amount, $rate)
 
 
 // Order received text
-function dogec_order_received_text($text, $order)
+function scc_order_received_text($text, $order)
 {
     if ($order->has_status('completed')) {
         $new = 'Thank you. Your order has been received!';
@@ -341,22 +341,22 @@ function dogec_order_received_text($text, $order)
     return $new;
 }
 
-add_filter('woocommerce_thankyou_order_received_text', 'dogec_order_received_text', 10, 2);
+add_filter('woocommerce_thankyou_order_received_text', 'scc_order_received_text', 10, 2);
 
 
 
 // Plugin directory path
-function dogec_plugin_path()
+function scc_plugin_path()
 {
     return untrailingslashit(plugin_dir_path(__FILE__));
 }
 
-add_filter('woocommerce_locate_template', 'dogec_woocommerce_locate_template', 10, 3);
+add_filter('woocommerce_locate_template', 'scc_woocommerce_locate_template', 10, 3);
 
 
 
 // Woocommerce plugin path in plugin
-function dogec_woocommerce_locate_template($template, $template_name, $template_path)
+function scc_woocommerce_locate_template($template, $template_name, $template_path)
 {
     global $woocommerce;
 
@@ -366,7 +366,7 @@ function dogec_woocommerce_locate_template($template, $template_name, $template_
         $template_path = $woocommerce->template_url;
     }
 
-    $plugin_path  = dogec_plugin_path() . '/woocommerce/';
+    $plugin_path  = scc_plugin_path() . '/woocommerce/';
 
     $template = locate_template(
         array(
@@ -392,12 +392,12 @@ function dogec_woocommerce_locate_template($template, $template_name, $template_
 
 
 // Add settings link
-function dogec_add_plugin_page_settings_link($links)
+function scc_add_plugin_page_settings_link($links)
 {
     $links[] = '<a href="' .
-        admin_url('admin.php?page=wc-settings&tab=checkout&section=degecash_payment') .
+        admin_url('admin.php?page=wc-settings&tab=checkout&section=stakecubecoin_payment') .
         '">' . __('Settings') . '</a>';
     return $links;
 }
 
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'dogec_add_plugin_page_settings_link');
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'scc_add_plugin_page_settings_link');
