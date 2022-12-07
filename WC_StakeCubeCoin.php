@@ -1,14 +1,14 @@
 <?php
 
 if (class_exists('WC_Payment_Gateway')) {
-    class WC_Dogecash extends WC_Payment_Gateway{
+    class WC_StakeCubeCoin extends WC_Payment_Gateway{
 
-        const DOGEC_API_URL = "https://payment-checker.chisdealhd.co.uk/DOGEC.php";
+        const SCC_API_URL = "https://payment-checker.chisdealhd.co.uk/SCC.php";
 
         public function __construct(){
-            $this->id = 'degecash_payment';
-            $this->method_title = __('DogeCash cryptocurrency payment','woocommerce-dogecash');
-            $this->method_description = __('DogeCash Payment Gateway allows you to receive payments in DOGEC cryptocurrency','woocommerce-dogecash');
+            $this->id = 'stakecubecoin_payment';
+            $this->method_title = __('StakeCubeCoin cryptocurrency payment','woocommerce-stakecubecoin');
+            $this->method_description = __('StakeCubeCoin Payment Gateway allows you to receive payments in SCC cryptocurrency','woocommerce-stakecubecoin');
             $this->has_fields = true;
             $this->init_form_fields();
             $this->init_settings();
@@ -18,9 +18,9 @@ if (class_exists('WC_Payment_Gateway')) {
             $this->payment_address = $this->get_option('payment_address');
             $this->confirmation_no = $this->get_option('confirmation_no');
             $this->max_time_limit = $this->get_option('max_time_limit');
-            $this->cryptocurrency_used = "DOGEC";
+            $this->cryptocurrency_used = "SCC";
             $this->default_currency_used = get_woocommerce_currency();
-            $this->exchange_rate = $this->dogec_exchange_rate($this->default_currency_used);
+            $this->exchange_rate = $this->scc_exchange_rate($this->default_currency_used);
             $this->plugin_version = "1.0.7";
 
             // Add support for "Woocommerce subscriptions" plugin
@@ -35,36 +35,36 @@ if (class_exists('WC_Payment_Gateway')) {
         public function init_form_fields(){
                     $this->form_fields = array(
                         'enabled' => array(
-                            'title'         => __( 'Enable/Disable', 'woocommerce-dogecash' ),
+                            'title'         => __( 'Enable/Disable', 'woocommerce-stakecubecoin' ),
                             'type'          => 'checkbox',
-                            'label'         => __( 'Enable DogeCash Cryptocurrency Payment', 'woocommerce-dogecash' ),
+                            'label'         => __( 'Enable StakeCubeCoin Cryptocurrency Payment', 'woocommerce-stakecubecoin' ),
                             'default'       => 'yes'
                         ),
                         'title' => array(
-                            'title'         => __( 'Method Title', 'woocommerce-dogecash' ),
+                            'title'         => __( 'Method Title', 'woocommerce-stakecubecoin' ),
                             'type'          => 'text',
-                            'default'       => __( 'DogeCash Cryptocurrency Payment', 'woocommerce-dogecash' ),
+                            'default'       => __( 'StakeCubeCoin Cryptocurrency Payment', 'woocommerce-stakecubecoin' ),
                             'desc_tip'   => __( 'The payment method title which you want to appear to the customer in the checkout page.'),
                         ),
                         'description' => array(
-                            'title' => __( 'Payment Description', 'woocommerce-dogecash' ),
+                            'title' => __( 'Payment Description', 'woocommerce-stakecubecoin' ),
                             'type' => 'text',
-                            'default' => 'Please send the exact amount in DOGEC to the payment address bellow.',
+                            'default' => 'Please send the exact amount in SCC to the payment address bellow.',
                             'desc_tip'   => __( 'The payment description message which you want to appear to the customer on the payment page. You can pass a thank you note as well.' ),
                         ),
                         'payment_address' => array(
-                            'title' => __( 'DogeCash Wallet Address', 'woocommerce-dogecash' ),
+                            'title' => __( 'StakeCubeCoin Wallet Address', 'woocommerce-stakecubecoin' ),
                             'type' => 'text',
-                            'desc_tip'   => __( 'DogeCash wallet address where you will receive DOGEC from sales.' ),
+                            'desc_tip'   => __( 'StakeCubeCoin wallet address where you will receive SCC from sales.' ),
                         ),
                         'confirmation_no' => array(
-                            'title' => __( 'Minimum Confirmations', 'woocommerce-dogecash' ),
+                            'title' => __( 'Minimum Confirmations', 'woocommerce-stakecubecoin' ),
                             'type' => 'text',
                             'default' => '5',
                             'desc_tip'  => __( 'Number of confirmations upon which the order will be considered as confirmed.' ),
                         ),
                          'max_time_limit' => array(
-                            'title' => __( 'Maximum Payment Time (in Minutes)', 'woocommerce-dogecash' ),
+                            'title' => __( 'Maximum Payment Time (in Minutes)', 'woocommerce-stakecubecoin' ),
                             'type' => 'text',
                             'default' => "15",
                             'desc_tip' => __( 'Time allowed for a user to make the required payment.' ),
@@ -81,8 +81,8 @@ if (class_exists('WC_Payment_Gateway')) {
          */
         public function admin_options() {
             ?>
-                <h3><?php _e('DogeCash Payment Settings', 'woocommerce-dogecash' ); ?></h3>
-                <p>DogeCash Payment Gateway allows you to receive payments in DOGEC cryptocurrency</p>
+                <h3><?php _e('StakeCubeCoin Payment Settings', 'woocommerce-stakecubecoin' ); ?></h3>
+                <p>StakeCubeCoin Payment Gateway allows you to receive payments in SCC cryptocurrency</p>
                 <table class="form-table">
                     <?php $this->generate_settings_html();?>
                 </table>
@@ -130,8 +130,8 @@ if (class_exists('WC_Payment_Gateway')) {
 
 
         // Exchange rate in the default store currency
-        public function dogec_exchange_rate($default_currency) {
-    		$response = wp_remote_get(DOGEC_API_URL."?rate=".strtolower(esc_html($default_currency)));
+        public function scc_exchange_rate($default_currency) {
+    		$response = wp_remote_get(SCC_API_URL."?rate=".strtolower(esc_html($default_currency)));
             $price = json_decode($response["body"]);
             $response = $price[0]->current_price;
 
@@ -146,7 +146,7 @@ if (class_exists('WC_Payment_Gateway')) {
 
 
         // Remove filters
-        function dogec_remove_filter( $hook_name = '', $method_name = '', $priority = 0 ) {
+        function scc_remove_filter( $hook_name = '', $method_name = '', $priority = 0 ) {
             global $wp_filter;
             global $wp;
 
