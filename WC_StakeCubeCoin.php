@@ -24,7 +24,7 @@ if (class_exists('WC_Payment_Gateway')) {
             $this->plugin_version = "1.0.7";
 
             // Add support for "Woocommerce subscriptions" plugin
-            $this->dogec_remove_filter( 'template_redirect', 'maybe_setup_cart', 100 );
+            $this->scc_remove_filter( 'template_redirect', 'maybe_setup_cart', 100 );
             $this->supports = array(
                'products',
                'subscriptions',
